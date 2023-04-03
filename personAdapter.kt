@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class PersonAdapter (val personsList: List<Person>): RecyclerView.Adapter<PersonAdapter.PersonViewHolder>(){
+class PersonAdapter (val personsList: List<Person>, val activity: MainActivity): RecyclerView.Adapter<PersonAdapter.PersonViewHolder>(){
     class PersonViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val tvName = itemView.findViewById<TextView>(R.id.textName)
         val tvSName = itemView.findViewById<TextView>(R.id.textSecondName)
@@ -20,6 +20,11 @@ class PersonAdapter (val personsList: List<Person>): RecyclerView.Adapter<Person
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemView = layoutInflater.inflate(R.layout.item_layout,parent,false)
         val viewHolder = PersonViewHolder(itemView)
+        viewHolder.itemView.setOnLongClickListener {
+            val position = viewHolder.adapterPosition
+            activity.deletePerson(position)
+            return@setOnLongClickListener true
+        }
         return viewHolder
     }
 
@@ -28,7 +33,12 @@ class PersonAdapter (val personsList: List<Person>): RecyclerView.Adapter<Person
         holder.tvName.text = currentPerson.name
         holder.tvSName.text = currentPerson.secondName
         holder.tvAge.text = "${currentPerson.age}years"
-        holder.ivPhoto.setImageResource(currentPerson.photoId)
+
+        if(currentPerson.photo !=null){
+            holder.ivPhoto.setImageBitmap(currentPerson.photo)
+        }else{
+            holder.ivPhoto.setImageResource(currentPerson.photoId)
+        }
     }
 
     override fun getItemCount(): Int {
